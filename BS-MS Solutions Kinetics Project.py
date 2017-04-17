@@ -47,6 +47,14 @@ def k4(T):
 
 # In[3]:
 
+print(k1(473))
+print(k2(473))
+print(k3(473))
+print(k4(473))
+
+
+# In[4]:
+
 def dFsoldV(Fsol,V):
     Fa, Fb, Fr, Fs, Fq = Fsol # unpack values from Fsol vector into 
                               # five variables
@@ -81,23 +89,23 @@ def dFsoldV(Fsol,V):
     return[dFadV,dFbdV,dFrdV,dFsdV,dFqdV]
 
 
-# In[4]:
+# In[5]:
 
 V_output = np.linspace(0,100000.,num=10000)
 
 
-# In[5]:
+# In[6]:
 
 Fsol0 = [Fa0,0,0,0,0]
 
 
-# In[6]:
+# In[7]:
 
 Y_result = scipy.integrate.odeint(dFsoldV, Fsol0, V_output)
 Fa, Fb, Fr, Fs, Fq = Y_result.T
 
 
-# In[7]:
+# In[8]:
 
 plt.plot(V_output, Fa, label='Fa')
 plt.plot(V_output, Fb, label='Fb')
@@ -110,7 +118,7 @@ plt.ylabel('Molar flow rate (mol/hr)')
 plt.show()
 
 
-# In[29]:
+# In[9]:
 
 final_r=[]
 Trange = np.linspace(323,473,150)
@@ -126,17 +134,18 @@ plt.ylabel('Molar flow rate of R(mol/hr)')
 plt.show()
 
 
-# In[8]:
+# In[10]:
 
 P_a = Price_a * Fa0/1000.
+Prec_a = Price_a * Fa/1000.
 P_b = Price_b * Fb/1000.
 P_r = Price_r * Fr/1000.
 P_s = Cost_SQ * Fs
 P_q = Cost_SQ * Fq
-P_tot = P_r - P_a - P_s - P_q
+P_tot = P_r + Prec_a + P_b - P_a - P_s - P_q
 
 
-# In[9]:
+# In[11]:
 
 plt.plot(V_output, P_tot)
 plt.xlabel('PFR Volume (m$^3$)')
@@ -144,7 +153,7 @@ plt.ylabel('Profit ($/hr)')
 plt.show()
 
 
-# In[32]:
+# In[12]:
 
 max_y = np.max(P_tot)
 max_x = V_output[np.argmax(P_tot)]
@@ -153,7 +162,7 @@ print("The max profit is ${:5.2f}/hour.".format(max_y))
 print("This occurs at reactor volume %.2f m3." %max_x)
 
 
-# In[11]:
+# In[13]:
 
 Cb = Fb/v0 #Ft
 plt.plot(V_output, Cb)
@@ -162,7 +171,7 @@ plt.ylabel('Concentration (mol/m$^3$)')
 plt.show()
 
 
-# In[12]:
+# In[14]:
 
 max_Cb = np.max(Cb)
 max_Vselect = V_output[np.argmax(Cb)]
@@ -170,14 +179,14 @@ max_Vselect = V_output[np.argmax(Cb)]
 print("The maximum concentration of B under these conditions is %.2f mol/m3." %max_Cb)
 
 
-# In[13]:
+# In[15]:
 
 selectivity = k2(473.)/(k3(473.) + k4(473.))*max_Cb
 print("The maximum selectivity of the desired to the undesired is %.2f." %selectivity)
 print("This occurs at a reactor volume of %.2f m3." %max_Vselect)
 
 
-# In[14]:
+# In[16]:
 
 Ca = Fa/v0
 Cb = Fb/v0 #Ft
@@ -189,7 +198,7 @@ plt.ylabel('Concentration (mol/m$^3$)')
 plt.show()
 
 
-# In[15]:
+# In[17]:
 
 yield_tot = k2(473.)/k1(473.) * (Cb**2/Ca)
 plt.plot(V_output, yield_tot)
@@ -198,7 +207,7 @@ plt.ylabel('Yield (R/A), unitless')
 plt.show()
 
 
-# In[17]:
+# In[18]:
 
 max_yield = np.max(yield_tot)
 max_Vyield = V_output[np.argmax(yield_tot)]
